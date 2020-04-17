@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class AlarmService {
@@ -28,7 +27,8 @@ public class AlarmService {
     }
 
     public void createAlarm(final AlarmDTO alarmDTO) {
-        alarmRepository.save(new Alarm(alarmDTO.getStockName(),
+        alarmRepository.save(new Alarm(
+                alarmDTO.getStockName(),
                 alarmDTO.getStockValue(),
                 alarmDTO.getPercentageIncrease(),
                 alarmDTO.getPercentageDecrease(),
@@ -36,16 +36,11 @@ public class AlarmService {
     }
 
     public void updateAlarm(final Long id, final AlarmDTO alarmDTO) {
-        final Optional<Alarm> alarmFromDB = alarmRepository.findById(id);
-        if (alarmFromDB.isPresent()) {
-            final Alarm alarm = alarmFromDB.get();
+        final Alarm alarm = getAlarmById(id);
 
-            updateAlarmFields(alarmDTO, alarm);
+        updateAlarmFields(alarmDTO, alarm);
 
-            alarmRepository.save(alarm);
-        } else {
-            throw new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, id));
-        }
+        alarmRepository.save(alarm);
     }
 
     public List<Alarm> getAllAlarms() {
@@ -54,6 +49,16 @@ public class AlarmService {
 
     public void deleteAlarm(final Long id) {
         alarmRepository.deleteById(id);
+    }
+
+    public void disableAlarm(final Alarm alarm) {
+        alarmRepository.save(alarm.withEnabled(false));
+    }
+
+    private Alarm getAlarmById(final Long id) {
+        return alarmRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, id)));
     }
 
     private void updateAlarmFields(final AlarmDTO alarmDTO, final Alarm alarm) {

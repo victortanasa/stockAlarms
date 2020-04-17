@@ -1,12 +1,64 @@
 package com.victor.stockalarms.service;
 
+import com.victor.stockalarms.entity.Alarm;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @Service
 public class ScheduledStockAlarmService {
 
-    void checkStocks() {
+    private static final Logger LOG = LogManager.getLogger(ScheduledStockAlarmService.class.getName());
 
+    private static final String COULD_NOT_DETERMINE_IF_SHOULD_TRIGGER_ALARM_MESSAGE = "Could not determine if alarm for stock [%s] and user id [%s] should be triggered.";
+
+    private final StockPriceService stockPriceService;
+    private final AlarmService alarmService;
+    private final EmailService emailService;
+
+    public ScheduledStockAlarmService(final StockPriceService stockPriceService,
+                                      final AlarmService alarmService,
+                                      final EmailService emailService) {
+        this.stockPriceService = stockPriceService;
+        this.alarmService = alarmService;
+        this.emailService = emailService;
+    }
+
+    @Scheduled(cron = "${stockAlarm.cron}")
+    void checkStocks() {
+        alarmService.getAllAlarms()
+                .parallelStream()
+                .filter(Alarm::isEnabled)
+                .filter(this::hasConfiguredThreshold)
+                .forEach(this::sendEmailIfAlarmIsTriggered);
+    }
+
+    private void sendEmailIfAlarmIsTriggered(final Alarm alarm) {
+        final Double currentPrice = stockPriceService.getStockPrice(alarm.getStockName());
+        if (alarmIsTriggered(alarm, currentPrice)) {
+            emailService.sendEmail(alarm.getUser().getEmail(), alarm.getStockValue(), currentPrice);
+            alarmService.disableAlarm(alarm);
+        }
+    }
+
+    private boolean alarmIsTriggered(final Alarm alarm, final Double currentPrice) {
+        if (Objects.isNull(currentPrice)) {
+            LOG.error(String.format(COULD_NOT_DETERMINE_IF_SHOULD_TRIGGER_ALARM_MESSAGE, alarm.getStockName(), alarm.getUser().getId()));
+            return false;
+        }
+
+        final double percentageDifference = ((currentPrice - alarm.getStockValue()) / currentPrice) * 100;
+        return Stream.of(alarm.getPercentageIncrease(), alarm.getPercentageDecrease())
+                .filter(Objects::nonNull)
+                .anyMatch(maxPercentageDifference -> Math.abs(percentageDifference) > maxPercentageDifference);
+    }
+
+    private boolean hasConfiguredThreshold(final Alarm alarm) {
+        return Objects.nonNull(alarm.getPercentageIncrease()) || Objects.nonNull(alarm.getPercentageDecrease());
     }
 
 }

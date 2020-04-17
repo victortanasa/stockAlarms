@@ -57,4 +57,9 @@ public class User {
         this.email = email;
     }
 
+    public User withId(final long id) {
+        this.id = id;
+        return this;
+    }
+
 }

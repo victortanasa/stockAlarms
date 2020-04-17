@@ -97,4 +97,15 @@ public class Alarm {
     public void setUser(final User user) {
         this.user = user;
     }
+
+    public Alarm withId(final long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Alarm withEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
 }
