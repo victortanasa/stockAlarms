@@ -1,6 +1,7 @@
 package com.victor.stockalarms.model;
 
-public class CreateAlarmRequest {
+//TODO: better name?
+public class AlarmRequest {
 
     private String stockName;
     private Double stockValue;
@@ -10,7 +11,7 @@ public class CreateAlarmRequest {
 
     private Boolean enabled;
 
-    public CreateAlarmRequest() {
+    public AlarmRequest() {
     }
 
     public String getStockName() {

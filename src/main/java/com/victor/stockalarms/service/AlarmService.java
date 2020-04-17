@@ -2,8 +2,7 @@ package com.victor.stockalarms.service;
 
 import com.google.common.collect.Lists;
 import com.victor.stockalarms.entity.Alarm;
-import com.victor.stockalarms.model.CreateAlarmRequest;
-import com.victor.stockalarms.model.UpdateAlarmRequest;
+import com.victor.stockalarms.model.AlarmRequest;
 import com.victor.stockalarms.repository.AlarmRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public class AlarmService {
         this.alarmRepository = alarmRepository;
     }
 
-    public void createAlarm(final CreateAlarmRequest request) {
+    public void createAlarm(final AlarmRequest request) {
         alarmRepository.save(new Alarm(request.getStockName(),
                 request.getStockValue(),
                 request.getPercentageIncrease(),
@@ -36,8 +35,8 @@ public class AlarmService {
                 userService.findByUserName("victor")));
     }
 
-    public void updateAlarm(final UpdateAlarmRequest request) {
-        final Optional<Alarm> alarmFromDB = alarmRepository.findById(request.getId());
+    public void updateAlarm(final Long id, final AlarmRequest request) {
+        final Optional<Alarm> alarmFromDB = alarmRepository.findById(id);
         if (alarmFromDB.isPresent()) {
             final Alarm alarm = alarmFromDB.get();
 
@@ -45,7 +44,7 @@ public class AlarmService {
 
             alarmRepository.save(alarm);
         } else {
-            throw new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, request.getId()));
+            throw new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, id));
         }
     }
 
@@ -57,7 +56,7 @@ public class AlarmService {
         alarmRepository.deleteById(id);
     }
 
-    private void updateAlarmFields(final UpdateAlarmRequest request, final Alarm alarm) {
+    private void updateAlarmFields(final AlarmRequest request, final Alarm alarm) {
         if (Objects.nonNull(request.getPercentageIncrease())) {
             alarm.setPercentageIncrease(request.getPercentageIncrease());
         }

@@ -4,8 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.victor.stockalarms.dto.AlarmDTO;
 import com.victor.stockalarms.entity.Alarm;
-import com.victor.stockalarms.model.CreateAlarmRequest;
-import com.victor.stockalarms.model.UpdateAlarmRequest;
+import com.victor.stockalarms.model.AlarmRequest;
 import com.victor.stockalarms.service.AlarmService;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +21,8 @@ public class AlarmController {
     }
 
     @PostMapping("/create")
-    public void createdAlarm(@RequestBody final CreateAlarmRequest createAlarmRequest) {
-        alarmService.createAlarm(createAlarmRequest);
+    public void createdAlarm(@RequestBody final AlarmRequest alarmRequest) {
+        alarmService.createAlarm(alarmRequest);
     }
 
     @GetMapping("/list")
@@ -33,12 +32,12 @@ public class AlarmController {
                 .collect(toList());
     }
 
-    @PutMapping("/update")
-    public void updateAlarm(@RequestBody final UpdateAlarmRequest updateAlarmRequest) {
-        alarmService.updateAlarm(updateAlarmRequest);
+    @PutMapping("/{id}")
+    public void updateAlarm(@PathVariable final Long id, @RequestBody final AlarmRequest alarmRequest) {
+        alarmService.updateAlarm(id, alarmRequest);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteAlarm(@PathVariable final Long id) {
         alarmService.deleteAlarm(id);
     }
