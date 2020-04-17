@@ -8,12 +8,16 @@ import javax.persistence.*;
 public class User {
 
     @Id
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String name;
     private String password;
     private String email;
+
+    public User() {
+    }
 
     public User(final String name, final String password, final String email) {
         this.password = password;
@@ -52,4 +56,5 @@ public class User {
     public void setEmail(final String email) {
         this.email = email;
     }
+
 }

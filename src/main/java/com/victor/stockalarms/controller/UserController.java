@@ -19,7 +19,7 @@ public class UserController {
 
     @PostMapping("/create")
     public void createUser(@RequestBody final CreateUserRequest createUserRequest) {
-        userService.saveUser(createUserRequest.getName(), createUserRequest.getPassword(), createUserRequest.getEmail());
+        userService.saveUser(createUserRequest);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.victor.stockalarms.service;
 
 import com.victor.stockalarms.entity.User;
+import com.victor.stockalarms.model.CreateUserRequest;
 import com.victor.stockalarms.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    //TODO: just pass request object?
-    public void saveUser(final String name, final String password, final String email) {
-        userRepository.save(new User(name, bCryptPasswordEncoder.encode(password), email));
+    public void saveUser(final CreateUserRequest request) {
+        userRepository.save(new User(request.getName(), bCryptPasswordEncoder.encode(request.getPassword()), request.getEmail()));
+    }
+
+    public User findByUserName(final String name) {
+        return userRepository.findByName(name);
     }
 
 }
