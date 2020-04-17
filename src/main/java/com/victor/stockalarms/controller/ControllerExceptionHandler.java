@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.persistence.EntityNotFoundException;
+
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
@@ -14,6 +16,12 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<String> handleDataAccessException(final DataAccessException e) {
         return ResponseEntity.badRequest().body(e.getMostSpecificCause().getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleEntityNotFoundException(final EntityNotFoundException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
 }

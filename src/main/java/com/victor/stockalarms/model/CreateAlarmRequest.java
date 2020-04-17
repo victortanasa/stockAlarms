@@ -8,6 +8,8 @@ public class CreateAlarmRequest {
     private Double percentageIncrease;
     private Double percentageDecrease;
 
+    private Boolean enabled;
+
     public CreateAlarmRequest() {
     }
 
@@ -41,5 +43,13 @@ public class CreateAlarmRequest {
 
     public void setPercentageDecrease(final Double percentageDecrease) {
         this.percentageDecrease = percentageDecrease;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(final Boolean enabled) {
+        this.enabled = enabled;
     }
 }

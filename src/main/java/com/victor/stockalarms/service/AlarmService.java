@@ -7,12 +7,16 @@ import com.victor.stockalarms.model.UpdateAlarmRequest;
 import com.victor.stockalarms.repository.AlarmRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class AlarmService {
+
+    private static final String ENTITY_NOT_FOUND_MESSAGE = "Could not find alarm with id [%s]";
 
     private final AlarmRepository alarmRepository;
 
@@ -33,7 +37,16 @@ public class AlarmService {
     }
 
     public void updateAlarm(final UpdateAlarmRequest request) {
-        throw new NotImplementedException();
+        final Optional<Alarm> alarmFromDB = alarmRepository.findById(request.getId());
+        if (alarmFromDB.isPresent()) {
+            final Alarm alarm = alarmFromDB.get();
+
+            updateAlarmFields(request, alarm);
+
+            alarmRepository.save(alarm);
+        } else {
+            throw new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, request.getId()));
+        }
     }
 
     public List<Alarm> getAllAlarms() {
@@ -42,6 +55,24 @@ public class AlarmService {
 
     public void deleteAlarm(final Long id) {
         alarmRepository.deleteById(id);
+    }
+
+    private void updateAlarmFields(final UpdateAlarmRequest request, final Alarm alarm) {
+        if (Objects.nonNull(request.getPercentageIncrease())) {
+            alarm.setPercentageIncrease(request.getPercentageIncrease());
+        }
+        if (Objects.nonNull(request.getPercentageDecrease())) {
+            alarm.setPercentageDecrease(request.getPercentageDecrease());
+        }
+        if (Objects.nonNull(request.getStockName())) {
+            alarm.setStockName(request.getStockName());
+        }
+        if (Objects.nonNull(request.getStockValue())) {
+            alarm.setStockValue(request.getStockValue());
+        }
+        if (Objects.nonNull(request.getEnabled())) {
+            alarm.setEnabled(request.getEnabled());
+        }
     }
 
 }
