@@ -1,7 +1,7 @@
 package com.victor.stockalarms.service;
 
+import com.victor.stockalarms.dto.UserDTO;
 import com.victor.stockalarms.entity.User;
-import com.victor.stockalarms.model.CreateUserRequest;
 import com.victor.stockalarms.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,8 +18,8 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void saveUser(final CreateUserRequest request) {
-        userRepository.save(new User(request.getName(), bCryptPasswordEncoder.encode(request.getPassword()), request.getEmail()));
+    public void saveUser(final UserDTO userDTO) {
+        userRepository.save(new User(userDTO.getName(), bCryptPasswordEncoder.encode(userDTO.getPassword()), userDTO.getEmail()));
     }
 
     public User findByUserName(final String name) {

@@ -1,6 +1,6 @@
 package com.victor.stockalarms.controller;
 
-import com.victor.stockalarms.model.CreateUserRequest;
+import com.victor.stockalarms.dto.UserDTO;
 import com.victor.stockalarms.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +18,8 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public void createUser(@RequestBody final CreateUserRequest createUserRequest) {
-        userService.saveUser(createUserRequest);
+    public void createUser(@RequestBody final UserDTO userDTO) {
+        userService.saveUser(userDTO);
     }
 
 }

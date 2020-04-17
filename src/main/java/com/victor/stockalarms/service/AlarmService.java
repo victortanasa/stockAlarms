@@ -1,8 +1,8 @@
 package com.victor.stockalarms.service;
 
 import com.google.common.collect.Lists;
+import com.victor.stockalarms.dto.AlarmDTO;
 import com.victor.stockalarms.entity.Alarm;
-import com.victor.stockalarms.model.AlarmRequest;
 import com.victor.stockalarms.repository.AlarmRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,20 +27,20 @@ public class AlarmService {
         this.alarmRepository = alarmRepository;
     }
 
-    public void createAlarm(final AlarmRequest request) {
-        alarmRepository.save(new Alarm(request.getStockName(),
-                request.getStockValue(),
-                request.getPercentageIncrease(),
-                request.getPercentageDecrease(),
+    public void createAlarm(final AlarmDTO alarmDTO) {
+        alarmRepository.save(new Alarm(alarmDTO.getStockName(),
+                alarmDTO.getStockValue(),
+                alarmDTO.getPercentageIncrease(),
+                alarmDTO.getPercentageDecrease(),
                 userService.findByUserName("victor")));
     }
 
-    public void updateAlarm(final Long id, final AlarmRequest request) {
+    public void updateAlarm(final Long id, final AlarmDTO alarmDTO) {
         final Optional<Alarm> alarmFromDB = alarmRepository.findById(id);
         if (alarmFromDB.isPresent()) {
             final Alarm alarm = alarmFromDB.get();
 
-            updateAlarmFields(request, alarm);
+            updateAlarmFields(alarmDTO, alarm);
 
             alarmRepository.save(alarm);
         } else {
@@ -56,21 +56,21 @@ public class AlarmService {
         alarmRepository.deleteById(id);
     }
 
-    private void updateAlarmFields(final AlarmRequest request, final Alarm alarm) {
-        if (Objects.nonNull(request.getPercentageIncrease())) {
-            alarm.setPercentageIncrease(request.getPercentageIncrease());
+    private void updateAlarmFields(final AlarmDTO alarmDTO, final Alarm alarm) {
+        if (Objects.nonNull(alarmDTO.getPercentageIncrease())) {
+            alarm.setPercentageIncrease(alarmDTO.getPercentageIncrease());
         }
-        if (Objects.nonNull(request.getPercentageDecrease())) {
-            alarm.setPercentageDecrease(request.getPercentageDecrease());
+        if (Objects.nonNull(alarmDTO.getPercentageDecrease())) {
+            alarm.setPercentageDecrease(alarmDTO.getPercentageDecrease());
         }
-        if (Objects.nonNull(request.getStockName())) {
-            alarm.setStockName(request.getStockName());
+        if (Objects.nonNull(alarmDTO.getStockName())) {
+            alarm.setStockName(alarmDTO.getStockName());
         }
-        if (Objects.nonNull(request.getStockValue())) {
-            alarm.setStockValue(request.getStockValue());
+        if (Objects.nonNull(alarmDTO.getStockValue())) {
+            alarm.setStockValue(alarmDTO.getStockValue());
         }
-        if (Objects.nonNull(request.getEnabled())) {
-            alarm.setEnabled(request.getEnabled());
+        if (Objects.nonNull(alarmDTO.getEnabled())) {
+            alarm.setEnabled(alarmDTO.getEnabled());
         }
     }
 

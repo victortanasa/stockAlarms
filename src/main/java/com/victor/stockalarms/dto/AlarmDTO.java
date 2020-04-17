@@ -10,7 +10,7 @@ public class AlarmDTO {
     private Double percentageIncrease;
     private Double percentageDecrease;
 
-    private boolean enabled;
+    private Boolean enabled;
 
     public AlarmDTO() {
     }
@@ -65,11 +65,11 @@ public class AlarmDTO {
         this.percentageDecrease = percentageDecrease;
     }
 
-    public boolean isEnabled() {
+    public Boolean getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(final Boolean enabled) {
         this.enabled = enabled;
     }
 }

@@ -1,15 +1,15 @@
-package com.victor.stockalarms.model;
+package com.victor.stockalarms.dto;
 
-public class CreateUserRequest {
+public class UserDTO {
 
     private String name;
     private String password;
     private String email;
 
-    public CreateUserRequest() {
+    public UserDTO() {
     }
 
-    public CreateUserRequest(final String name, final String password, final String email) {
+    public UserDTO(final String name, final String password, final String email) {
         this.name = name;
         this.password = password;
         this.email = email;
