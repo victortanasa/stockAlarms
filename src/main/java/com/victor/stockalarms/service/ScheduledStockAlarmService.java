@@ -40,7 +40,7 @@ public class ScheduledStockAlarmService {
     private void sendEmailIfAlarmIsTriggered(final Alarm alarm) {
         final Double currentPrice = stockPriceService.getStockPrice(alarm.getStockName());
         if (alarmIsTriggered(alarm, currentPrice)) {
-            emailService.sendEmail(alarm.getUser().getEmail(), alarm.getStockValue(), currentPrice);
+            emailService.sendEmail(alarm, currentPrice);
             alarmService.disableAlarm(alarm);
         }
     }

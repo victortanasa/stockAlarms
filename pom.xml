@@ -15,6 +15,7 @@
     <description>Stock Alarm project</description>
 
     <properties>
+        <java.mail.version>1.6.2</java.mail.version>
         <jsonpath.version>2.4.0</jsonpath.version>
         <guava.version>27.1-jre</guava.version>
         <log4j.version>2.11.2</log4j.version>
@@ -88,6 +89,12 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>${java.mail.version}</version>
         </dependency>
 
         <dependency>

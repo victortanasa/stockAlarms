@@ -32,7 +32,7 @@ class ScheduledStockAlarmServiceTest {
         scheduledStockAlarmService.checkStocks();
 
         //Then
-        verify(emailService).sendEmail(DEFAULT_USER.getEmail(), 20.2, 30D);
+        verify(emailService).sendEmail(ALARM_IBM, 30D);
         verify(alarmService).disableAlarm(ALARM_IBM);
     }
 
@@ -46,10 +46,9 @@ class ScheduledStockAlarmServiceTest {
         scheduledStockAlarmService.checkStocks();
 
         //Then
-        verify(emailService).sendEmail(DEFAULT_USER.getEmail(), 20.2, 30D);
+        verify(emailService).sendEmail(ALARM_IBM_ONE_THRESHOLD, 30D);
         verify(alarmService).disableAlarm(ALARM_IBM_ONE_THRESHOLD);
     }
-
 
     @Test
     void alarmIsNotTriggeredTest() {
@@ -61,7 +60,7 @@ class ScheduledStockAlarmServiceTest {
         scheduledStockAlarmService.checkStocks();
 
         //Then
-        verify(emailService, times(0)).sendEmail(anyString(), anyDouble(), anyDouble());
+        verify(emailService, times(0)).sendEmail(any(Alarm.class), anyDouble());
         verify(alarmService, times(0)).disableAlarm(any(Alarm.class));
     }
 
@@ -75,7 +74,7 @@ class ScheduledStockAlarmServiceTest {
         scheduledStockAlarmService.checkStocks();
 
         //Then
-        verify(emailService, times(0)).sendEmail(anyString(), anyDouble(), anyDouble());
+        verify(emailService, times(0)).sendEmail(any(Alarm.class), anyDouble());
         verify(alarmService, times(0)).disableAlarm(any(Alarm.class));
     }
 
@@ -89,7 +88,7 @@ class ScheduledStockAlarmServiceTest {
         scheduledStockAlarmService.checkStocks();
 
         //Then
-        verify(emailService, times(0)).sendEmail(anyString(), anyDouble(), anyDouble());
+        verify(emailService, times(0)).sendEmail(any(Alarm.class), anyDouble());
         verify(alarmService, times(0)).disableAlarm(any(Alarm.class));
     }
 
@@ -103,7 +102,7 @@ class ScheduledStockAlarmServiceTest {
         scheduledStockAlarmService.checkStocks();
 
         //Then
-        verify(emailService, times(0)).sendEmail(anyString(), anyDouble(), anyDouble());
+        verify(emailService, times(0)).sendEmail(any(Alarm.class), anyDouble());
         verify(alarmService, times(0)).disableAlarm(any(Alarm.class));
     }
 

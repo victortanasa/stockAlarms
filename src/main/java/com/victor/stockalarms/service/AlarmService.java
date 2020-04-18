@@ -38,7 +38,7 @@ public class AlarmService {
     public void updateAlarm(final Long id, final AlarmDTO alarmDTO) {
         final Alarm alarm = getAlarmById(id);
 
-        updateAlarmFields(alarmDTO, alarm);
+        updateAlarmFields(alarm, alarmDTO);
 
         alarmRepository.save(alarm);
     }
@@ -61,7 +61,7 @@ public class AlarmService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, id)));
     }
 
-    private void updateAlarmFields(final AlarmDTO alarmDTO, final Alarm alarm) {
+    private void updateAlarmFields(final Alarm alarm, final AlarmDTO alarmDTO) {
         if (Objects.nonNull(alarmDTO.getPercentageIncrease())) {
             alarm.setPercentageIncrease(alarmDTO.getPercentageIncrease());
         }
