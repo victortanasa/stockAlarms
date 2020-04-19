@@ -1,5 +1,7 @@
 package com.victor.stockalarms.dto;
 
+import com.victor.stockalarms.AlarmType;
+
 public class AlarmDTO {
 
     private Long id;
@@ -7,19 +9,20 @@ public class AlarmDTO {
     private String stockName;
     private Double stockValue;
 
-    private Double percentageIncrease;
-    private Double percentageDecrease;
+    private Double percentageThreshold;
+
+    private AlarmType alarmType;
 
     private Boolean enabled;
 
     public AlarmDTO() {
     }
 
-    public AlarmDTO(final Long id, final String stockName, final Double stockValue, final Double percentageIncrease,
-                    final Double percentageDecrease, boolean enabled) {
-        this.percentageDecrease = percentageDecrease;
-        this.percentageIncrease = percentageIncrease;
+    public AlarmDTO(final Long id, final String stockName, final Double stockValue, final Double percentageThreshold,
+                    final AlarmType alarmType, boolean enabled) {
+        this.percentageThreshold = percentageThreshold;
         this.stockValue = stockValue;
+        this.alarmType = alarmType;
         this.stockName = stockName;
         this.enabled = enabled;
         this.id = id;
@@ -49,20 +52,20 @@ public class AlarmDTO {
         this.stockValue = stockValue;
     }
 
-    public Double getPercentageIncrease() {
-        return percentageIncrease;
+    public Double getPercentageThreshold() {
+        return percentageThreshold;
     }
 
-    public void setPercentageIncrease(final Double percentageIncrease) {
-        this.percentageIncrease = percentageIncrease;
+    public void setPercentageThreshold(final Double percentageThreshold) {
+        this.percentageThreshold = percentageThreshold;
     }
 
-    public Double getPercentageDecrease() {
-        return percentageDecrease;
+    public AlarmType getAlarmType() {
+        return alarmType;
     }
 
-    public void setPercentageDecrease(final Double percentageDecrease) {
-        this.percentageDecrease = percentageDecrease;
+    public void setAlarmType(final AlarmType alarmType) {
+        this.alarmType = alarmType;
     }
 
     public Boolean getEnabled() {

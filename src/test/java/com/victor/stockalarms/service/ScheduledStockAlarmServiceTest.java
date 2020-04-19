@@ -1,8 +1,10 @@
 package com.victor.stockalarms.service;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.victor.stockalarms.AlarmType.OVER_THRESHOLD;
 import static org.mockito.Mockito.*;
 
+import com.victor.stockalarms.AlarmType;
 import com.victor.stockalarms.entity.Alarm;
 import com.victor.stockalarms.entity.User;
 import org.junit.jupiter.api.Test;
@@ -17,44 +19,87 @@ class ScheduledStockAlarmServiceTest {
 
     private static final User DEFAULT_USER = new User("name", "pwd", "name@provider.com").withId(1);
 
-    private static final Alarm ALARM_IBM = new Alarm("IBM", 20.2, 10D, 15D, DEFAULT_USER).withId(1);
-    private static final Alarm ALARM_IBM_DISABLED = new Alarm("IBM", 20.2, 10D, 15D, DEFAULT_USER).withId(1).withEnabled(false);
-    private static final Alarm ALARM_IBM_ONE_THRESHOLD = new Alarm("IBM", 20.2, 10D, null, DEFAULT_USER).withId(1);
-    private static final Alarm ALARM_IBM_NO_THRESHOLDS = new Alarm("IBM", 20.2, null, null, DEFAULT_USER).withId(1);
+    private static final Alarm ALARM_IBM_OVER_THRESHOLD = new Alarm("IBM", 20D, 10D, OVER_THRESHOLD, DEFAULT_USER).withId(1);
+    private static final Alarm ALARM_IBM_UNDER_THRESHOLD = new Alarm("IBM", 20D, 10D, AlarmType.UNDER_THRESHOLD, DEFAULT_USER).withId(1);
+
+    private static final Alarm ALARM_IBM_DISABLED = new Alarm("IBM", 20D, 10D, OVER_THRESHOLD, DEFAULT_USER).withId(1).withEnabled(false);
+    private static final Alarm ALARM_IBM_NULL_THRESHOLD = new Alarm("IBM", 20.2, null, OVER_THRESHOLD, DEFAULT_USER).withId(1);
 
     @Test
-    void alarmIsTriggeredTest() {
+    void overThresholdAlarmIsTriggeredByStockPriceIncreaseTest() {
         //Given
-        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM));
+        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM_OVER_THRESHOLD));
         when(stockPriceService.getStockPrice("IBM")).thenReturn(30D);
 
         //When
         scheduledStockAlarmService.checkStocks();
 
         //Then
-        verify(emailService).sendEmail(ALARM_IBM, 30D);
-        verify(alarmService).disableAlarm(ALARM_IBM);
+        verify(emailService).sendEmail(ALARM_IBM_OVER_THRESHOLD, 30D);
+        verify(alarmService).disableAlarm(ALARM_IBM_OVER_THRESHOLD);
     }
 
     @Test
-    void alarmWithOneThresholdIsTriggeredTest() {
+    void overThresholdAlarmIsNotTriggeredByStockPriceDecreaseTest() {
         //Given
-        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM_ONE_THRESHOLD));
+        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM_OVER_THRESHOLD));
+        when(stockPriceService.getStockPrice("IBM")).thenReturn(10D);
+
+        //When
+        scheduledStockAlarmService.checkStocks();
+
+        //Then
+        verify(emailService, times(0)).sendEmail(any(Alarm.class), anyDouble());
+        verify(alarmService, times(0)).disableAlarm(any(Alarm.class));
+    }
+
+    @Test
+    void underThresholdAlarmIsTriggeredByStockPriceDecreaseTest() {
+        //Given
+        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM_UNDER_THRESHOLD));
+        when(stockPriceService.getStockPrice("IBM")).thenReturn(10D);
+
+        //When
+        scheduledStockAlarmService.checkStocks();
+
+        //Then
+        verify(emailService).sendEmail(ALARM_IBM_UNDER_THRESHOLD, 10D);
+        verify(alarmService).disableAlarm(ALARM_IBM_UNDER_THRESHOLD);
+    }
+
+    @Test
+    void underThresholdAlarmIsNotTriggeredByStockPriceIncreaseTest() {
+        //Given
+        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM_UNDER_THRESHOLD));
         when(stockPriceService.getStockPrice("IBM")).thenReturn(30D);
 
         //When
         scheduledStockAlarmService.checkStocks();
 
         //Then
-        verify(emailService).sendEmail(ALARM_IBM_ONE_THRESHOLD, 30D);
-        verify(alarmService).disableAlarm(ALARM_IBM_ONE_THRESHOLD);
+        verify(emailService, times(0)).sendEmail(any(Alarm.class), anyDouble());
+        verify(alarmService, times(0)).disableAlarm(any(Alarm.class));
     }
 
     @Test
-    void alarmIsNotTriggeredTest() {
+    void overThresholdAlarmIsNotTriggeredBySmallIncreaseTest() {
         //Given
-        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM));
-        when(stockPriceService.getStockPrice("IBM")).thenReturn(21D);
+        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM_OVER_THRESHOLD));
+        when(stockPriceService.getStockPrice("IBM")).thenReturn(20.1);
+
+        //When
+        scheduledStockAlarmService.checkStocks();
+
+        //Then
+        verify(emailService, times(0)).sendEmail(any(Alarm.class), anyDouble());
+        verify(alarmService, times(0)).disableAlarm(any(Alarm.class));
+    }
+
+    @Test
+    void underThresholdAlarmIsNotTriggeredBySmallDecreaseTest() {
+        //Given
+        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM_UNDER_THRESHOLD));
+        when(stockPriceService.getStockPrice("IBM")).thenReturn(19.9);
 
         //When
         scheduledStockAlarmService.checkStocks();
@@ -68,7 +113,6 @@ class ScheduledStockAlarmServiceTest {
     void disabledAlarmIsNotTriggeredTest() {
         //Given
         when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM_DISABLED));
-        when(stockPriceService.getStockPrice("IBM")).thenReturn(30D);
 
         //When
         scheduledStockAlarmService.checkStocks();
@@ -79,10 +123,9 @@ class ScheduledStockAlarmServiceTest {
     }
 
     @Test
-    void alarmWithNoThresholdsIsNotTriggeredTest() {
+    void alarmWithNullThresholdIsNotTriggeredTest() {
         //Given
-        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM_NO_THRESHOLDS));
-        when(stockPriceService.getStockPrice("IBM")).thenReturn(30D);
+        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM_NULL_THRESHOLD));
 
         //When
         scheduledStockAlarmService.checkStocks();
@@ -95,7 +138,7 @@ class ScheduledStockAlarmServiceTest {
     @Test
     void alarmIsNotTriggeredWhenStockPriceResponseIsNullTest() {
         //Given
-        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM));
+        when(alarmService.getAllAlarms()).thenReturn(newArrayList(ALARM_IBM_OVER_THRESHOLD));
         when(stockPriceService.getStockPrice("IBM")).thenReturn(null);
 
         //When

@@ -1,5 +1,6 @@
 package com.victor.stockalarms.entity;
 
+import com.victor.stockalarms.AlarmType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -19,10 +20,12 @@ public class Alarm {
     @Column(name = "stock_value")
     private Double stockValue;
 
-    @Column(name = "percentage_increase")
-    private Double percentageIncrease;
-    @Column(name = "percentage_decrease")
-    private Double percentageDecrease;
+    @Column(name = "percentage_threshold")
+    private Double percentageThreshold;
+
+    @Column(name = "alarm_type")
+    @Enumerated(EnumType.STRING)
+    private AlarmType alarmType;
 
     private boolean enabled = true;
 
@@ -35,10 +38,10 @@ public class Alarm {
     public Alarm() {
     }
 
-    public Alarm(final String stockName, final Double stockValue, final Double percentageIncrease, final Double percentageDecrease, final User user) {
-        this.percentageIncrease = percentageIncrease;
-        this.percentageDecrease = percentageDecrease;
+    public Alarm(final String stockName, final Double stockValue, final Double percentageThreshold, final AlarmType alarmType, final User user) {
+        this.percentageThreshold = percentageThreshold;
         this.stockValue = stockValue;
+        this.alarmType = alarmType;
         this.stockName = stockName;
         this.user = user;
     }
@@ -67,20 +70,20 @@ public class Alarm {
         this.stockValue = stockValue;
     }
 
-    public Double getPercentageIncrease() {
-        return percentageIncrease;
+    public Double getPercentageThreshold() {
+        return percentageThreshold;
     }
 
-    public void setPercentageIncrease(final Double percentageIncrease) {
-        this.percentageIncrease = percentageIncrease;
+    public void setPercentageThreshold(final Double percentageThreshold) {
+        this.percentageThreshold = percentageThreshold;
     }
 
-    public Double getPercentageDecrease() {
-        return percentageDecrease;
+    public AlarmType getAlarmType() {
+        return alarmType;
     }
 
-    public void setPercentageDecrease(final Double percentageDecrease) {
-        this.percentageDecrease = percentageDecrease;
+    public void setAlarmType(final AlarmType alarmType) {
+        this.alarmType = alarmType;
     }
 
     public boolean isEnabled() {

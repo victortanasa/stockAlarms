@@ -2,6 +2,7 @@ package com.victor.stockalarms.service;
 
 import static com.google.common.collect.Maps.newHashMap;
 
+import com.victor.stockalarms.AlarmType;
 import com.victor.stockalarms.entity.Alarm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,20 +11,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 @Service
 public class ScheduledStockAlarmService {
 
     private static final Logger LOG = LogManager.getLogger(ScheduledStockAlarmService.class.getName());
 
-    private static final String COULD_NOT_DETERMINE_IF_SHOULD_TRIGGER_ALARM_MESSAGE = "Could not determine if alarm for stock [%s] and user id [%s] should be triggered.";
+    private static final Map<String, Double> STOCK_PRICE_CACHE = newHashMap();
 
+    private static final String COULD_NOT_DETERMINE_IF_SHOULD_TRIGGER_ALARM_MESSAGE = "Could not determine if alarm for stock [%s] and user id [%s] should be triggered.";
     private final StockPriceService stockPriceService;
     private final AlarmService alarmService;
     private final EmailService emailService;
-
-    private static final Map<String, Double> STOCK_PRICE_CACHE = newHashMap();
 
     public ScheduledStockAlarmService(final StockPriceService stockPriceService,
                                       final AlarmService alarmService,
@@ -66,13 +65,13 @@ public class ScheduledStockAlarmService {
         }
 
         final double percentageDifference = ((currentPrice - alarm.getStockValue()) / currentPrice) * 100;
-        return Stream.of(alarm.getPercentageIncrease(), alarm.getPercentageDecrease())
-                .filter(Objects::nonNull)
-                .anyMatch(maxPercentageDifference -> Math.abs(percentageDifference) > maxPercentageDifference);
+
+        return AlarmType.OVER_THRESHOLD.equals(alarm.getAlarmType()) && percentageDifference > alarm.getPercentageThreshold() ||
+                AlarmType.UNDER_THRESHOLD.equals(alarm.getAlarmType()) && percentageDifference < -alarm.getPercentageThreshold();
     }
 
     private boolean hasConfiguredThreshold(final Alarm alarm) {
-        return Objects.nonNull(alarm.getPercentageIncrease()) || Objects.nonNull(alarm.getPercentageDecrease());
+        return Objects.nonNull(alarm.getPercentageThreshold());
     }
 
 }

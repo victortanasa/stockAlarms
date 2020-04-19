@@ -46,8 +46,8 @@ public class AlarmController {
         return new AlarmDTO(alarm.getId(),
                 alarm.getStockName(),
                 alarm.getStockValue(),
-                alarm.getPercentageIncrease(),
-                alarm.getPercentageDecrease(),
+                alarm.getPercentageThreshold(),
+                alarm.getAlarmType(),
                 alarm.isEnabled());
     }
 

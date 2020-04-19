@@ -28,8 +28,8 @@ public class AlarmService {
         alarmRepository.save(new Alarm(
                 alarmDTO.getStockName(),
                 alarmDTO.getStockValue(),
-                alarmDTO.getPercentageIncrease(),
-                alarmDTO.getPercentageDecrease(),
+                alarmDTO.getPercentageThreshold(),
+                alarmDTO.getAlarmType(),
                 userService.getLoggedInUser()));
     }
 
@@ -66,11 +66,11 @@ public class AlarmService {
     }
 
     private void updateAlarmFields(final Alarm alarm, final AlarmDTO alarmDTO) {
-        if (Objects.nonNull(alarmDTO.getPercentageIncrease())) {
-            alarm.setPercentageIncrease(alarmDTO.getPercentageIncrease());
+        if (Objects.nonNull(alarmDTO.getPercentageThreshold())) {
+            alarm.setPercentageThreshold(alarmDTO.getPercentageThreshold());
         }
-        if (Objects.nonNull(alarmDTO.getPercentageDecrease())) {
-            alarm.setPercentageDecrease(alarmDTO.getPercentageDecrease());
+        if (Objects.nonNull(alarmDTO.getAlarmType())) {
+            alarm.setAlarmType(alarmDTO.getAlarmType());
         }
         if (Objects.nonNull(alarmDTO.getStockName())) {
             alarm.setStockName(alarmDTO.getStockName());
