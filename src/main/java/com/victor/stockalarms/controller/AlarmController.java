@@ -20,7 +20,6 @@ public class AlarmController {
         this.alarmService = alarmService;
     }
 
-    //TODO: register?
     @PostMapping("/create")
     public void createdAlarm(@RequestBody final AlarmDTO alarmDTO) {
         alarmService.createAlarm(alarmDTO);
