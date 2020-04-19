@@ -15,10 +15,8 @@ public class Alarm {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "stock_name")
-    private String stockName;
-    @Column(name = "stock_value")
-    private Double stockValue;
+    @Column(name = "base_stock_price")
+    private Double baseStockPrice;
 
     @Column(name = "percentage_threshold")
     private Double percentageThreshold;
@@ -35,14 +33,19 @@ public class Alarm {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "stock_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Stock stock;
+
     public Alarm() {
     }
 
-    public Alarm(final String stockName, final Double stockValue, final Double percentageThreshold, final AlarmType alarmType, final User user) {
+    public Alarm(final Double baseStockPrice, final Double percentageThreshold, final AlarmType alarmType, final User user, final Stock stock) {
         this.percentageThreshold = percentageThreshold;
-        this.stockValue = stockValue;
+        this.baseStockPrice = baseStockPrice;
         this.alarmType = alarmType;
-        this.stockName = stockName;
+        this.stock = stock;
         this.user = user;
     }
 
@@ -54,20 +57,12 @@ public class Alarm {
         this.id = id;
     }
 
-    public String getStockName() {
-        return stockName;
+    public Double getBaseStockPrice() {
+        return baseStockPrice;
     }
 
-    public void setStockName(final String stockName) {
-        this.stockName = stockName;
-    }
-
-    public Double getStockValue() {
-        return stockValue;
-    }
-
-    public void setStockValue(final Double stockValue) {
-        this.stockValue = stockValue;
+    public void setBaseStockPrice(final Double baseStockPrice) {
+        this.baseStockPrice = baseStockPrice;
     }
 
     public Double getPercentageThreshold() {
@@ -100,6 +95,14 @@ public class Alarm {
 
     public void setUser(final User user) {
         this.user = user;
+    }
+
+    public Stock getStock() {
+        return stock;
+    }
+
+    public void setStock(final Stock stock) {
+        this.stock = stock;
     }
 
     public Alarm withId(final long id) {

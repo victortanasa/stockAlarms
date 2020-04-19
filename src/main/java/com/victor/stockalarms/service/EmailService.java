@@ -43,7 +43,7 @@ public class EmailService {
             message.setFrom(new InternetAddress(emailSenderUsername));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(alarm.getUser().getEmail()));
             message.setSubject(STOCK_ALERT_EMAIL_SUBJECT);
-            message.setText(String.format(EMAIL_CONTENT, alarm.getUser().getName(), alarm.getStockName(), alarm.getStockValue(), newPrice));
+            message.setText(String.format(EMAIL_CONTENT, alarm.getUser().getName(), alarm.getStock().getName(), alarm.getBaseStockPrice(), newPrice));
 
             Transport.send(message);
 

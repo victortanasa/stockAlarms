@@ -52,19 +52,21 @@ public class ScheduledStockAlarmService {
     }
 
     private Double getStockPrice(final Alarm alarm) {
-        if (!STOCK_PRICE_CACHE.containsKey(alarm.getStockName()) || Objects.isNull(STOCK_PRICE_CACHE.get(alarm.getStockName()))) {
-            STOCK_PRICE_CACHE.put(alarm.getStockName(), stockPriceService.getStockPrice(alarm.getStockName()));
+        final String stockName = alarm.getStock().getName();
+        if (!STOCK_PRICE_CACHE.containsKey(stockName) || Objects.isNull(STOCK_PRICE_CACHE.get(stockName))) {
+            //TODO: save latest stock price in DB
+            STOCK_PRICE_CACHE.put(stockName, stockPriceService.getStockPrice(stockName));
         }
-        return STOCK_PRICE_CACHE.get(alarm.getStockName());
+        return STOCK_PRICE_CACHE.get(stockName);
     }
 
     private boolean alarmIsTriggered(final Alarm alarm, final Double currentPrice) {
         if (Objects.isNull(currentPrice)) {
-            LOG.error(String.format(COULD_NOT_DETERMINE_IF_SHOULD_TRIGGER_ALARM_MESSAGE, alarm.getStockName(), alarm.getUser().getId()));
+            LOG.error(String.format(COULD_NOT_DETERMINE_IF_SHOULD_TRIGGER_ALARM_MESSAGE, alarm.getStock().getName(), alarm.getUser().getId()));
             return false;
         }
 
-        final double percentageDifference = ((currentPrice - alarm.getStockValue()) / currentPrice) * 100;
+        final double percentageDifference = ((currentPrice - alarm.getBaseStockPrice()) / currentPrice) * 100;
 
         return AlarmType.OVER_THRESHOLD.equals(alarm.getAlarmType()) && percentageDifference > alarm.getPercentageThreshold() ||
                 AlarmType.UNDER_THRESHOLD.equals(alarm.getAlarmType()) && percentageDifference < -alarm.getPercentageThreshold();

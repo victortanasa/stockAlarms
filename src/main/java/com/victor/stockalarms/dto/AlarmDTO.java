@@ -6,8 +6,7 @@ public class AlarmDTO {
 
     private Long id;
 
-    private String stockName;
-    private Double stockValue;
+    private Double baseStockPrice;
 
     private Double percentageThreshold;
 
@@ -15,16 +14,17 @@ public class AlarmDTO {
 
     private Boolean enabled;
 
+    private StockDTO stock;
+
     public AlarmDTO() {
     }
 
-    public AlarmDTO(final Long id, final String stockName, final Double stockValue, final Double percentageThreshold,
-                    final AlarmType alarmType, boolean enabled) {
+    public AlarmDTO(final Long id, final Double baseStockPrice, final Double percentageThreshold, final AlarmType alarmType, boolean enabled, final StockDTO stock) {
         this.percentageThreshold = percentageThreshold;
-        this.stockValue = stockValue;
+        this.baseStockPrice = baseStockPrice;
         this.alarmType = alarmType;
-        this.stockName = stockName;
         this.enabled = enabled;
+        this.stock = stock;
         this.id = id;
     }
 
@@ -36,20 +36,12 @@ public class AlarmDTO {
         this.id = id;
     }
 
-    public String getStockName() {
-        return stockName;
+    public Double getBaseStockPrice() {
+        return baseStockPrice;
     }
 
-    public void setStockName(final String stockName) {
-        this.stockName = stockName;
-    }
-
-    public Double getStockValue() {
-        return stockValue;
-    }
-
-    public void setStockValue(final Double stockValue) {
-        this.stockValue = stockValue;
+    public void setBaseStockPrice(final Double baseStockPrice) {
+        this.baseStockPrice = baseStockPrice;
     }
 
     public Double getPercentageThreshold() {
@@ -74,5 +66,13 @@ public class AlarmDTO {
 
     public void setEnabled(final Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public StockDTO getStock() {
+        return stock;
+    }
+
+    public void setStock(final StockDTO stock) {
+        this.stock = stock;
     }
 }

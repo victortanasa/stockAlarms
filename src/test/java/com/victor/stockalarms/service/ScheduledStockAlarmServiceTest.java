@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import com.victor.stockalarms.AlarmType;
 import com.victor.stockalarms.entity.Alarm;
+import com.victor.stockalarms.entity.Stock;
 import com.victor.stockalarms.entity.User;
 import org.junit.jupiter.api.Test;
 
@@ -19,11 +20,13 @@ class ScheduledStockAlarmServiceTest {
 
     private static final User DEFAULT_USER = new User("name", "pwd", "name@provider.com").withId(1);
 
-    private static final Alarm ALARM_IBM_OVER_THRESHOLD = new Alarm("IBM", 20D, 10D, OVER_THRESHOLD, DEFAULT_USER).withId(1);
-    private static final Alarm ALARM_IBM_UNDER_THRESHOLD = new Alarm("IBM", 20D, 10D, AlarmType.UNDER_THRESHOLD, DEFAULT_USER).withId(1);
+    private static final Stock IBM_STOCK = new Stock("IBM", 20D).withId(1L);
 
-    private static final Alarm ALARM_IBM_DISABLED = new Alarm("IBM", 20D, 10D, OVER_THRESHOLD, DEFAULT_USER).withId(1).withEnabled(false);
-    private static final Alarm ALARM_IBM_NULL_THRESHOLD = new Alarm("IBM", 20.2, null, OVER_THRESHOLD, DEFAULT_USER).withId(1);
+    private static final Alarm ALARM_IBM_OVER_THRESHOLD = new Alarm(20D, 10D, OVER_THRESHOLD, DEFAULT_USER, IBM_STOCK).withId(1);
+    private static final Alarm ALARM_IBM_UNDER_THRESHOLD = new Alarm(20D, 10D, AlarmType.UNDER_THRESHOLD, DEFAULT_USER, IBM_STOCK).withId(1);
+
+    private static final Alarm ALARM_IBM_DISABLED = new Alarm(20D, 10D, OVER_THRESHOLD, DEFAULT_USER, IBM_STOCK).withId(1).withEnabled(false);
+    private static final Alarm ALARM_IBM_NULL_THRESHOLD = new Alarm(20.2, null, OVER_THRESHOLD, DEFAULT_USER, IBM_STOCK).withId(1);
 
     @Test
     void overThresholdAlarmIsTriggeredByStockPriceIncreaseTest() {

@@ -3,7 +3,9 @@ package com.victor.stockalarms.controller;
 import static java.util.stream.Collectors.toList;
 
 import com.victor.stockalarms.dto.AlarmDTO;
+import com.victor.stockalarms.dto.StockDTO;
 import com.victor.stockalarms.entity.Alarm;
+import com.victor.stockalarms.entity.Stock;
 import com.victor.stockalarms.service.AlarmService;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,11 +46,15 @@ public class AlarmController {
 
     private AlarmDTO toAlarmDTO(final Alarm alarm) {
         return new AlarmDTO(alarm.getId(),
-                alarm.getStockName(),
-                alarm.getStockValue(),
+                alarm.getBaseStockPrice(),
                 alarm.getPercentageThreshold(),
                 alarm.getAlarmType(),
-                alarm.isEnabled());
+                alarm.isEnabled(),
+                toStockDTO(alarm.getStock()));
+    }
+
+    private StockDTO toStockDTO(final Stock stock) {
+        return new StockDTO(stock.getId(), stock.getName(), stock.getPrice());
     }
 
 }

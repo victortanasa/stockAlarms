@@ -1,9 +1,12 @@
 package com.victor.stockalarms.service;
 
-import com.google.common.collect.Lists;
+import static com.google.common.collect.Lists.newArrayList;
+
 import com.victor.stockalarms.dto.AlarmDTO;
 import com.victor.stockalarms.entity.Alarm;
+import com.victor.stockalarms.entity.Stock;
 import com.victor.stockalarms.repository.AlarmRepository;
+import com.victor.stockalarms.repository.StockRepository;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -13,24 +16,28 @@ import java.util.Objects;
 @Service
 public class AlarmService {
 
-    private static final String ENTITY_NOT_FOUND_MESSAGE = "Could not find alarm with id [%s], for user id [%s].";
+    private static final String ALARM_NOT_FOUND_MESSAGE = "Could not find alarm with id [%s], for user id [%s].";
+    private static final String STOCK_NOT_FOUND_MESSAGE = "Could not find stock with id [%s].";
 
     private final AlarmRepository alarmRepository;
+    private final StockRepository stockRepository;
     private final UserService userService;
 
     public AlarmService(final AlarmRepository alarmRepository,
+                        final StockRepository stockRepository,
                         final UserService userService) {
         this.alarmRepository = alarmRepository;
+        this.stockRepository = stockRepository;
         this.userService = userService;
     }
 
     public void createAlarm(final AlarmDTO alarmDTO) {
         alarmRepository.save(new Alarm(
-                alarmDTO.getStockName(),
-                alarmDTO.getStockValue(),
+                alarmDTO.getBaseStockPrice(),
                 alarmDTO.getPercentageThreshold(),
                 alarmDTO.getAlarmType(),
-                userService.getLoggedInUser()));
+                userService.getLoggedInUser(),
+                getStockById(alarmDTO.getStock().getId())));
     }
 
     public void updateAlarm(final Long id, final AlarmDTO alarmDTO) {
@@ -42,7 +49,7 @@ public class AlarmService {
     }
 
     public List<Alarm> getAllAlarmsForUser() {
-        return Lists.newArrayList(alarmRepository.findAllByUserId(userService.getLoggedInUser().getId()));
+        return newArrayList(alarmRepository.findAllByUserId(userService.getLoggedInUser().getId()));
     }
 
     public void deleteAlarm(final Long id) {
@@ -52,7 +59,7 @@ public class AlarmService {
     }
 
     List<Alarm> getAllAlarms() {
-        return Lists.newArrayList(alarmRepository.findAll());
+        return newArrayList(alarmRepository.findAll());
     }
 
     void disableAlarm(final Alarm alarm) {
@@ -62,7 +69,13 @@ public class AlarmService {
     private Alarm getAlarmByIdAndUserId(final Long alarmId, final Long userId) {
         return alarmRepository
                 .findByIdAndUserId(alarmId, userId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, alarmId, userId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(ALARM_NOT_FOUND_MESSAGE, alarmId, userId)));
+    }
+
+    private Stock getStockById(final Long stockId) {
+        return stockRepository
+                .findById(stockId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format(STOCK_NOT_FOUND_MESSAGE, stockId)));
     }
 
     private void updateAlarmFields(final Alarm alarm, final AlarmDTO alarmDTO) {
@@ -72,11 +85,11 @@ public class AlarmService {
         if (Objects.nonNull(alarmDTO.getAlarmType())) {
             alarm.setAlarmType(alarmDTO.getAlarmType());
         }
-        if (Objects.nonNull(alarmDTO.getStockName())) {
-            alarm.setStockName(alarmDTO.getStockName());
+        if (Objects.nonNull(alarmDTO.getStock().getId())) {
+            alarm.setStock(getStockById(alarmDTO.getStock().getId()));
         }
-        if (Objects.nonNull(alarmDTO.getStockValue())) {
-            alarm.setStockValue(alarmDTO.getStockValue());
+        if (Objects.nonNull(alarmDTO.getBaseStockPrice())) {
+            alarm.setBaseStockPrice(alarmDTO.getBaseStockPrice());
         }
         if (Objects.nonNull(alarmDTO.getEnabled())) {
             alarm.setEnabled(alarmDTO.getEnabled());
