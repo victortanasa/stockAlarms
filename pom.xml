@@ -15,8 +15,10 @@
     <description>Stock Alarm project</description>
 
     <properties>
+        <apache-commons-lang3.version>3.9</apache-commons-lang3.version>
         <java.mail.version>1.6.2</java.mail.version>
         <jsonpath.version>2.4.0</jsonpath.version>
+        <java.jwt.vesion>3.4.0</java.jwt.vesion>
         <guava.version>27.1-jre</guava.version>
         <log4j.version>2.11.2</log4j.version>
         <junit.version>4.13</junit.version>
@@ -84,6 +86,18 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${java.jwt.vesion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${apache-commons-lang3.version}</version>
         </dependency>
 
         <dependency>

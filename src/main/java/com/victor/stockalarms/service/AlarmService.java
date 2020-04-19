@@ -3,8 +3,10 @@ package com.victor.stockalarms.service;
 import com.google.common.collect.Lists;
 import com.victor.stockalarms.dto.AlarmDTO;
 import com.victor.stockalarms.entity.Alarm;
+import com.victor.stockalarms.entity.User;
 import com.victor.stockalarms.repository.AlarmRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -32,9 +34,10 @@ public class AlarmService {
                 alarmDTO.getStockValue(),
                 alarmDTO.getPercentageIncrease(),
                 alarmDTO.getPercentageDecrease(),
-                userService.findByUserName("victor")));
+                getLoggedInUser()));
     }
 
+    //TODO: check user
     public void updateAlarm(final Long id, final AlarmDTO alarmDTO) {
         final Alarm alarm = getAlarmById(id);
 
@@ -44,9 +47,10 @@ public class AlarmService {
     }
 
     public List<Alarm> getAllAlarms() {
-        return Lists.newArrayList(alarmRepository.findAll());
+        return Lists.newArrayList(alarmRepository.findAllByUserId(getLoggedInUser().getId()));
     }
 
+    //TODO: check user
     public void deleteAlarm(final Long id) {
         alarmRepository.deleteById(id);
     }
@@ -77,6 +81,12 @@ public class AlarmService {
         if (Objects.nonNull(alarmDTO.getEnabled())) {
             alarm.setEnabled(alarmDTO.getEnabled());
         }
+    }
+
+    //TODO: move in UserService?
+    private User getLoggedInUser() {
+        final Object loggedInUserName = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userService.findByUserName(loggedInUserName.toString());
     }
 
 }
