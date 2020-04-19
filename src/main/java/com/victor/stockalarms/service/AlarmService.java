@@ -13,7 +13,7 @@ import java.util.Objects;
 @Service
 public class AlarmService {
 
-    private static final String ENTITY_NOT_FOUND_MESSAGE = "Could not find alarm with id [%s]";
+    private static final String ENTITY_NOT_FOUND_MESSAGE = "Could not find alarm with id [%s], for user id [%s].";
 
     private final AlarmRepository alarmRepository;
     private final UserService userService;
@@ -33,32 +33,36 @@ public class AlarmService {
                 userService.getLoggedInUser()));
     }
 
-    //TODO: check user
     public void updateAlarm(final Long id, final AlarmDTO alarmDTO) {
-        final Alarm alarm = getAlarmById(id);
+        final Alarm alarm = getAlarmByIdAndUserId(id, userService.getLoggedInUser().getId());
 
         updateAlarmFields(alarm, alarmDTO);
 
         alarmRepository.save(alarm);
     }
 
-    public List<Alarm> getAllAlarms() {
+    public List<Alarm> getAllAlarmsForUser() {
         return Lists.newArrayList(alarmRepository.findAllByUserId(userService.getLoggedInUser().getId()));
     }
 
-    //TODO: check user
     public void deleteAlarm(final Long id) {
-        alarmRepository.deleteById(id);
+        final Alarm alarm = getAlarmByIdAndUserId(id, userService.getLoggedInUser().getId());
+
+        alarmRepository.delete(alarm);
+    }
+
+    List<Alarm> getAllAlarms() {
+        return Lists.newArrayList(alarmRepository.findAll());
     }
 
     void disableAlarm(final Alarm alarm) {
         alarmRepository.save(alarm.withEnabled(false));
     }
 
-    private Alarm getAlarmById(final Long id) {
+    private Alarm getAlarmByIdAndUserId(final Long alarmId, final Long userId) {
         return alarmRepository
-                .findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, id)));
+                .findByIdAndUserId(alarmId, userId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, alarmId, userId)));
     }
 
     private void updateAlarmFields(final Alarm alarm, final AlarmDTO alarmDTO) {

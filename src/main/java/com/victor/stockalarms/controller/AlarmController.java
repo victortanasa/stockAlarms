@@ -27,7 +27,7 @@ public class AlarmController {
 
     @GetMapping("/list")
     public List<AlarmDTO> listAlarms() {
-        return alarmService.getAllAlarms().stream()
+        return alarmService.getAllAlarmsForUser().stream()
                 .map(this::toAlarmDTO)
                 .collect(toList());
     }
