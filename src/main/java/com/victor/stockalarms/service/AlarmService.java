@@ -3,10 +3,7 @@ package com.victor.stockalarms.service;
 import com.google.common.collect.Lists;
 import com.victor.stockalarms.dto.AlarmDTO;
 import com.victor.stockalarms.entity.Alarm;
-import com.victor.stockalarms.entity.User;
 import com.victor.stockalarms.repository.AlarmRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -19,13 +16,12 @@ public class AlarmService {
     private static final String ENTITY_NOT_FOUND_MESSAGE = "Could not find alarm with id [%s]";
 
     private final AlarmRepository alarmRepository;
+    private final UserService userService;
 
-    //TODO: remove
-    @Autowired
-    private UserService userService;
-
-    public AlarmService(final AlarmRepository alarmRepository) {
+    public AlarmService(final AlarmRepository alarmRepository,
+                        final UserService userService) {
         this.alarmRepository = alarmRepository;
+        this.userService = userService;
     }
 
     public void createAlarm(final AlarmDTO alarmDTO) {
@@ -34,7 +30,7 @@ public class AlarmService {
                 alarmDTO.getStockValue(),
                 alarmDTO.getPercentageIncrease(),
                 alarmDTO.getPercentageDecrease(),
-                getLoggedInUser()));
+                userService.getLoggedInUser()));
     }
 
     //TODO: check user
@@ -47,7 +43,7 @@ public class AlarmService {
     }
 
     public List<Alarm> getAllAlarms() {
-        return Lists.newArrayList(alarmRepository.findAllByUserId(getLoggedInUser().getId()));
+        return Lists.newArrayList(alarmRepository.findAllByUserId(userService.getLoggedInUser().getId()));
     }
 
     //TODO: check user
@@ -55,7 +51,7 @@ public class AlarmService {
         alarmRepository.deleteById(id);
     }
 
-    public void disableAlarm(final Alarm alarm) {
+    void disableAlarm(final Alarm alarm) {
         alarmRepository.save(alarm.withEnabled(false));
     }
 
@@ -81,12 +77,6 @@ public class AlarmService {
         if (Objects.nonNull(alarmDTO.getEnabled())) {
             alarm.setEnabled(alarmDTO.getEnabled());
         }
-    }
-
-    //TODO: move in UserService?
-    private User getLoggedInUser() {
-        final Object loggedInUserName = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userService.findByUserName(loggedInUserName.toString());
     }
 
 }

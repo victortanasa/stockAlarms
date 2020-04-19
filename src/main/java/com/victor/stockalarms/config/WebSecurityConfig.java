@@ -2,7 +2,8 @@ package com.victor.stockalarms.config;
 
 import com.victor.stockalarms.filter.JWTAuthenticationFilter;
 import com.victor.stockalarms.filter.JWTAuthorizationFilter;
-import com.victor.stockalarms.service.UserDetailsServiceImpl;
+import com.victor.stockalarms.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -22,11 +23,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String USER_ENDPOINTS = "/user/**";
 
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
-
-    public WebSecurityConfig(final UserDetailsServiceImpl userDetailsServiceImpl) {
-        this.userDetailsServiceImpl = userDetailsServiceImpl;
-    }
+    @Autowired
+    private UserService userService;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -41,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(bCryptPasswordEncoder());
+        auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder());
     }
 
     @Bean

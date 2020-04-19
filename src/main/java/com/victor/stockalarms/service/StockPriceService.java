@@ -36,7 +36,7 @@ public class StockPriceService {
                 .build();
     }
 
-    public Double getStockPrice(final String symbol) {
+    Double getStockPrice(final String symbol) {
         final ClientResponse clientResponse = webClient.get()
                 .uri(String.format(GLOBAL_QUOTE_ENDPOINT, symbol, apiKey))
                 .exchange()

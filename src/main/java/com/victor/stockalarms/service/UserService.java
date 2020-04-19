@@ -1,13 +1,21 @@
 package com.victor.stockalarms.service;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import com.victor.stockalarms.dto.UserDTO;
 import com.victor.stockalarms.entity.User;
 import com.victor.stockalarms.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -22,8 +30,18 @@ public class UserService {
         userRepository.save(new User(userDTO.getName(), bCryptPasswordEncoder.encode(userDTO.getPassword()), userDTO.getEmail()));
     }
 
-    public User findByUserName(final String name) {
-        return userRepository.findByName(name);
+    @Override
+    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+        final User user = userRepository.findByName(username);
+        if (Objects.isNull(user)) {
+            throw new UsernameNotFoundException(username);
+        }
+        return new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(), newArrayList());
+    }
+
+    User getLoggedInUser() {
+        final Object loggedInUserName = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findByName(loggedInUserName.toString());
     }
 
 }
