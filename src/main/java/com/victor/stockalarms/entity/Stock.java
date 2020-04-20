@@ -52,4 +52,9 @@ public class Stock {
         return this;
     }
 
+    public Stock withPrice(final Double price) {
+        this.price = price;
+        return this;
+    }
+
 }

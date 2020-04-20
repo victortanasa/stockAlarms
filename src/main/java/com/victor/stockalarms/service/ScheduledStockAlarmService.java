@@ -20,14 +20,18 @@ public class ScheduledStockAlarmService {
     private static final Map<String, Double> STOCK_PRICE_CACHE = newHashMap();
 
     private static final String COULD_NOT_DETERMINE_IF_SHOULD_TRIGGER_ALARM_MESSAGE = "Could not determine if alarm for stock [%s] and user id [%s] should be triggered.";
+
     private final StockPriceService stockPriceService;
+    private final StockService stockService;
     private final AlarmService alarmService;
     private final EmailService emailService;
 
     public ScheduledStockAlarmService(final StockPriceService stockPriceService,
+                                      final StockService stockService,
                                       final AlarmService alarmService,
                                       final EmailService emailService) {
         this.stockPriceService = stockPriceService;
+        this.stockService = stockService;
         this.alarmService = alarmService;
         this.emailService = emailService;
     }
@@ -54,8 +58,9 @@ public class ScheduledStockAlarmService {
     private Double getStockPrice(final Alarm alarm) {
         final String stockName = alarm.getStock().getName();
         if (!STOCK_PRICE_CACHE.containsKey(stockName) || Objects.isNull(STOCK_PRICE_CACHE.get(stockName))) {
-            //TODO: save latest stock price in DB
-            STOCK_PRICE_CACHE.put(stockName, stockPriceService.getStockPrice(stockName));
+            final Double stockPrice = stockPriceService.getStockPrice(stockName);
+            STOCK_PRICE_CACHE.put(stockName, stockPrice);
+            stockService.updateStockPrice(alarm.getStock(), stockPrice);
         }
         return STOCK_PRICE_CACHE.get(stockName);
     }

@@ -22,6 +22,10 @@ public class StockService {
         stockRepository.save(new Stock(stockDTO.getName(), stockDTO.getPrice()));
     }
 
+    void updateStockPrice(final Stock stock, final Double newPrice) {
+        stockRepository.save(stock.withPrice(newPrice));
+    }
+
     public List<Stock> getAllStocks() {
         return newArrayList(stockRepository.findAll());
     }

@@ -15,8 +15,9 @@ class ScheduledStockAlarmServiceTest {
     private StockPriceService stockPriceService = mock(StockPriceService.class);
     private AlarmService alarmService = mock(AlarmService.class);
     private EmailService emailService = mock(EmailService.class);
+    private StockService stockService = mock(StockService.class);
 
-    private ScheduledStockAlarmService scheduledStockAlarmService = new ScheduledStockAlarmService(stockPriceService, alarmService, emailService);
+    private ScheduledStockAlarmService scheduledStockAlarmService = new ScheduledStockAlarmService(stockPriceService, stockService, alarmService, emailService);
 
     private static final User DEFAULT_USER = new User("name", "pwd", "name@provider.com").withId(1);
 

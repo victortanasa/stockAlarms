@@ -85,14 +85,14 @@ public class AlarmService {
         if (Objects.nonNull(alarmDTO.getAlarmType())) {
             alarm.setAlarmType(alarmDTO.getAlarmType());
         }
-        if (Objects.nonNull(alarmDTO.getStock().getId())) {
-            alarm.setStock(getStockById(alarmDTO.getStock().getId()));
-        }
         if (Objects.nonNull(alarmDTO.getBaseStockPrice())) {
             alarm.setBaseStockPrice(alarmDTO.getBaseStockPrice());
         }
         if (Objects.nonNull(alarmDTO.getEnabled())) {
             alarm.setEnabled(alarmDTO.getEnabled());
+        }
+        if (Objects.nonNull(alarmDTO.getStock()) && Objects.nonNull(alarmDTO.getStock().getId())) {
+            alarm.setStock(getStockById(alarmDTO.getStock().getId()));
         }
     }
 

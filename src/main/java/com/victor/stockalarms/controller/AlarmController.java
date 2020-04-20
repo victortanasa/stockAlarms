@@ -54,7 +54,10 @@ public class AlarmController {
     }
 
     private StockDTO toStockDTO(final Stock stock) {
-        return new StockDTO(stock.getId(), stock.getName(), stock.getPrice());
+        return new StockDTO(
+                stock.getId(),
+                stock.getName(),
+                stock.getPrice());
     }
 
 }
