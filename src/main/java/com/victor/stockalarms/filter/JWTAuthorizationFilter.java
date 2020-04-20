@@ -28,32 +28,30 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(final HttpServletRequest request,
                                     final HttpServletResponse response,
                                     final FilterChain filterChain) throws IOException, ServletException {
-        final String header = request.getHeader(HEADER_STRING);
+        final String header = request.getHeader(AUTHORIZATION_HEADER);
 
-        if (header == null || !header.startsWith(BEARER_TOKEN_PREFIX)) {
+        if (Objects.isNull(header) || !header.startsWith(BEARER_TOKEN_PREFIX)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(request));
         filterChain.doFilter(request, response);
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        final String token = request.getHeader(HEADER_STRING);
-        if (Objects.nonNull(token)) {
-            final String user = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
-                    .build()
-                    .verify(token.replace(BEARER_TOKEN_PREFIX, StringUtils.EMPTY))
-                    .getSubject();
+    private UsernamePasswordAuthenticationToken getAuthentication(final HttpServletRequest request) {
+        final String token = request.getHeader(AUTHORIZATION_HEADER);
 
-            if (Objects.nonNull(user)) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
-            }
-            return null;
-        }
-        return null;
+        return Objects.nonNull(token) ? getAuthToken(token) : null;
     }
+
+    private UsernamePasswordAuthenticationToken getAuthToken(final String token) {
+        final String user = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
+                .build()
+                .verify(token.replace(BEARER_TOKEN_PREFIX, StringUtils.EMPTY))
+                .getSubject();
+
+        return Objects.nonNull(user) ? new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>()) : null;
+    }
+
 }
