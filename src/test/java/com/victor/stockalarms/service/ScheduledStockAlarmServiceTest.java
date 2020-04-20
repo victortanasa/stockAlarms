@@ -19,7 +19,7 @@ class ScheduledStockAlarmServiceTest {
 
     private ScheduledStockAlarmService scheduledStockAlarmService = new ScheduledStockAlarmService(stockPriceService, stockService, alarmService, emailService);
 
-    private static final User DEFAULT_USER = new User("name", "pwd", "name@provider.com").withId(1);
+    private static final User DEFAULT_USER = new User("firstName", "lastName", "pwd", "name@provider.com").withId(1);
 
     private static final Stock IBM_STOCK = new Stock("IBM", 20D).withId(1L);
 

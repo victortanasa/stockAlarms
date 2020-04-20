@@ -2,25 +2,35 @@ package com.victor.stockalarms.dto;
 
 public class UserDTO {
 
-    private String name;
+    private String firstName;
+    private String lastName;
     private String password;
     private String email;
 
     public UserDTO() {
     }
 
-    public UserDTO(final String name, final String password, final String email) {
-        this.name = name;
+    public UserDTO(final String firstName, final String lastName, final String password, final String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.password = password;
         this.email = email;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    public void setFirstName(final String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(final String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPassword() {

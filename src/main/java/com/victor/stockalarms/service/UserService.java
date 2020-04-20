@@ -27,21 +27,21 @@ public class UserService implements UserDetailsService {
     }
 
     public void saveUser(final UserDTO userDTO) {
-        userRepository.save(new User(userDTO.getName(), bCryptPasswordEncoder.encode(userDTO.getPassword()), userDTO.getEmail()));
+        userRepository.save(new User(userDTO.getFirstName(), userDTO.getLastName(), bCryptPasswordEncoder.encode(userDTO.getPassword()), userDTO.getEmail()));
     }
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        final User user = userRepository.findByName(username);
+        final User user = userRepository.findByEmail(username);
         if (Objects.isNull(user)) {
             throw new UsernameNotFoundException(username);
         }
-        return new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(), newArrayList());
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), newArrayList());
     }
 
     User getLoggedInUser() {
         final Object loggedInUserName = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByName(loggedInUserName.toString());
+        return userRepository.findByEmail(loggedInUserName.toString());
     }
 
 }
