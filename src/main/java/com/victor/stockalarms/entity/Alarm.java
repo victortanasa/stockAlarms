@@ -27,7 +27,6 @@ public class Alarm {
 
     private boolean enabled = true;
 
-    //TODO: FetchType.LAZY
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
