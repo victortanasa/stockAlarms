@@ -4,9 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import com.victor.stockalarms.dto.AlarmDTO;
 import com.victor.stockalarms.entity.Alarm;
-import com.victor.stockalarms.entity.Stock;
 import com.victor.stockalarms.repository.AlarmRepository;
-import com.victor.stockalarms.repository.StockRepository;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,17 +15,16 @@ import java.util.Objects;
 public class AlarmService {
 
     private static final String ALARM_NOT_FOUND_MESSAGE = "Could not find alarm with id [%s], for user id [%s].";
-    private static final String STOCK_NOT_FOUND_MESSAGE = "Could not find stock with id [%s].";
 
     private final AlarmRepository alarmRepository;
-    private final StockRepository stockRepository;
+    private final StockService stockService;
     private final UserService userService;
 
     public AlarmService(final AlarmRepository alarmRepository,
-                        final StockRepository stockRepository,
+                        final StockService stockService,
                         final UserService userService) {
         this.alarmRepository = alarmRepository;
-        this.stockRepository = stockRepository;
+        this.stockService = stockService;
         this.userService = userService;
     }
 
@@ -37,7 +34,7 @@ public class AlarmService {
                 alarmDTO.getPercentageThreshold(),
                 alarmDTO.getAlarmType(),
                 userService.getLoggedInUser(),
-                getStockById(alarmDTO.getStock().getId())));
+                stockService.getStockById(alarmDTO.getStock().getId())));
     }
 
     public void updateAlarm(final Long id, final AlarmDTO alarmDTO) {
@@ -72,12 +69,6 @@ public class AlarmService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format(ALARM_NOT_FOUND_MESSAGE, alarmId, userId)));
     }
 
-    private Stock getStockById(final Long stockId) {
-        return stockRepository
-                .findById(stockId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(STOCK_NOT_FOUND_MESSAGE, stockId)));
-    }
-
     private void updateAlarmFields(final Alarm alarm, final AlarmDTO alarmDTO) {
         if (Objects.nonNull(alarmDTO.getPercentageThreshold())) {
             alarm.setPercentageThreshold(alarmDTO.getPercentageThreshold());
@@ -92,7 +83,7 @@ public class AlarmService {
             alarm.setEnabled(alarmDTO.getEnabled());
         }
         if (Objects.nonNull(alarmDTO.getStock()) && Objects.nonNull(alarmDTO.getStock().getId())) {
-            alarm.setStock(getStockById(alarmDTO.getStock().getId()));
+            alarm.setStock(stockService.getStockById(alarmDTO.getStock().getId()));
         }
     }
 

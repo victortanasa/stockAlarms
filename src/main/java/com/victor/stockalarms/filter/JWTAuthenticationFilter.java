@@ -1,6 +1,7 @@
 package com.victor.stockalarms.filter;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.victor.stockalarms.filter.FilterConstants.*;
 
 import com.auth0.jwt.JWT;
@@ -19,7 +20,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -44,7 +44,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     new UsernamePasswordAuthenticationToken(
                             userDTO.getEmail(),
                             userDTO.getPassword(),
-                            new ArrayList<>())
+                            newArrayList())
             );
         } catch (final IOException e) {
             LOG.error(COULD_NOT_EXTRACT_CREDENTIALS_MESSAGE, e);
