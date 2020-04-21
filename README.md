@@ -4,9 +4,10 @@ For all requests set the Content-Type header to "application/json"
 
 Usage:
 
-1) Register user
+<b>Register user</b>
 
 POST http://localhost:5000/user/register
+
 Body:
 {
 	"firstName" : "victor",
@@ -16,9 +17,10 @@ Body:
 }
 
 
-2) Login user
+<b>Login user</b>
 
 POST http://localhost:5000/login
+
 Body:
 {
 	"email" : "victor.tanasa@gmail.com",
@@ -28,10 +30,12 @@ Body:
 Returns Bearer authorization token on response headers.
 
 
-3) Create stock:
+<b>Create stock</b>
 
 POST http://localhost:5000/stock/create
+
 Header: Authorization + Bearer value
+
 Body:
 {
 	"name" : "IBM",
@@ -39,9 +43,10 @@ Body:
 }
 
 
-4) List all stocks:
+<b>List all stocks</b>
 
 GET http://localhost:5000/stock/list
+
 Header: Authorization + Bearer value
 
 Returns:
@@ -59,10 +64,12 @@ Returns:
 ]
 
 
-5) Create alarm:
+<b>Create alarm</b>
 
 POST http://localhost:5000/alarm/create
+
 Header: Authorization + Bearer value
+
 Body:
 {
 	"stock" : {
@@ -75,10 +82,12 @@ Body:
 }
 
 
-6) Update alarm:
+<b>Update alarm</b>
 
 PUT http://localhost:5000/alarm/{alarmId}
+
 Header: Authorization + Bearer value
+
 Body:
 {
 	"stock" : {
@@ -93,12 +102,13 @@ Body:
 If a field is ommited, it will not be updated.
 
 
-7) Delete alarm:
+<b>Delete alarm</b>
 
 DELETE http://localhost:5000/alarm/{alarmId}
 
 
-8) List alarms:
+<b>List alarms</b>
 
 GET http://localhost:5000/alarm/list
+
 Header: Authorization + Bearer value
