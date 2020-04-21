@@ -99,12 +99,14 @@ Body:
 	"enabled" : false
 }
 
-If a field is ommited, it will not be updated.
+If a field is omitted, it will not be updated.
 
 
 <b>Delete alarm</b>
 
 DELETE http://localhost:5000/alarm/{alarmId}
+
+Header: Authorization + Bearer value
 
 
 <b>List alarms</b>
