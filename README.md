@@ -112,3 +112,32 @@ DELETE http://localhost:5000/alarm/{alarmId}
 GET http://localhost:5000/alarm/list
 
 Header: Authorization + Bearer value
+
+Returns:
+
+[
+    {
+        "id": 99,
+        "baseStockPrice": 100,
+        "percentageThreshold": 7.5,
+        "alarmType": "OVER_THRESHOLD",
+        "enabled": true,
+        "stock": {
+            "id": 98,
+            "name": "GOOG",
+            "price": 200.1
+        }
+    },
+    {
+        "id": 100,
+        "baseStockPrice": 106,
+        "percentageThreshold": 2.5,
+        "alarmType": "OVER_THRESHOLD",
+        "enabled": true,
+        "stock": {
+            "id": 97,
+            "name": "IBM",
+            "price": 99.6
+        }
+    }
+]
