@@ -1,3 +1,5 @@
+This repo should be treated as a code sample - I wrote it for an interview in about 6 to 8 hours.
+
 # stockAlarms
 
 For all requests set the Content-Type header to "application/json"
