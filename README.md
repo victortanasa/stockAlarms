@@ -1,5 +1,7 @@
 This repo should be treated as a code sample - I wrote it for an interview in about 6 to 8 hours.
 
+The idea was to create an app that periodically checks the prices of configured stocks and alerts the user when the price changes by a certain threshold. 
+
 # stockAlarms
 
 For all requests set the Content-Type header to "application/json"
